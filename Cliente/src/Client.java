@@ -31,8 +31,11 @@ public class Client implements Runnable{
     @Override
     public void run(){
         String msg;
-        while ((msg = clientSocket.getMessage()) != null )
-            System.out.println("Msg recebida:" + msg);
+        while ((msg = clientSocket.getMessage()) != null ){
+            //System.out.print("\033[2K\r");
+            System.out.println("\r Msg recebida:" + msg);
+            System.out.print("Digite uma mensagem: ");
+        }
     }
 
     private void  messageLoop(){

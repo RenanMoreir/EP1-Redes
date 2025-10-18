@@ -1,16 +1,24 @@
 import java.io.*;
 import java.net.ServerSocket;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Server {
     private static final  int PORT = 4000;
     private ServerSocket serverSocket;
+    private final List<gameRoom> rooms = new ArrayList<>();
     private final List<ClientSocket> clientes = new LinkedList<>();
+
+    private final Scanner scanner = new Scanner(System.in);
 
     public void start(){
         try{
+            String config;
+            System.out.println("configurações do servidor");
+            System.out.println("Crie as salas com o seguinte formato:SALA <nome da sala>");
+            do{
+                config = scanner.nextLine();
+                createRoom(config);
+            }while(!config.equalsIgnoreCase("pronto"));
             System.out.println("Servidor Iniciado");
             serverSocket = new ServerSocket(PORT);
             clientConnectionLoop();
@@ -54,6 +62,22 @@ public class Server {
         }
         finally {
             clientSocket.close();
+        }
+    }
+
+    private void createRoom(String config){
+        if(config.substring(0,4).equalsIgnoreCase("sala")){
+            for (gameRoom room : rooms) {
+                if (room.getName().equals(config.substring(5))) {
+                    System.out.println("Já existe uma sala com esse nome");
+                    return;
+                }
+            }
+            rooms.add(new gameRoom(config.substring(5)));
+        } else if(config.substring(0,3).equalsIgnoreCase("pronto")){
+            return;
+        } else {
+            System.out.println("comando desconhecido");
         }
     }
 
