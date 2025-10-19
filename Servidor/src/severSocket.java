@@ -5,12 +5,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-public class ClientSocket {
+public class severSocket {
     private final Socket socket;
     private final BufferedReader in;
     private final PrintWriter out;
 
-    public ClientSocket(Socket socket) throws IOException {
+    public severSocket(Socket socket) throws IOException {
             this.socket = socket;
             System.out.println("Cliente " + socket.getRemoteSocketAddress() + " conectado");
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));

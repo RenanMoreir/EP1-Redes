@@ -6,7 +6,7 @@ public class Server {
     private static final  int PORT = 4000;
     private ServerSocket serverSocket;
     private final List<gameRoom> rooms = new ArrayList<>();
-    private final List<ClientSocket> clientes = new LinkedList<>();
+    private final List<severSocket> clientes = new LinkedList<>();
 
     private final Scanner scanner = new Scanner(System.in);
 
@@ -19,6 +19,7 @@ public class Server {
                 config = scanner.nextLine();
                 createRoom(config);
             }while(!config.equalsIgnoreCase("pronto"));
+            listRoom();
             System.out.println("Servidor Iniciado");
             serverSocket = new ServerSocket(PORT);
             clientConnectionLoop();
@@ -31,37 +32,37 @@ public class Server {
     private void clientConnectionLoop(){
         try {
             while (true){
-                ClientSocket clientSocket = new ClientSocket(serverSocket.accept());
-                clientes.add(clientSocket);
-                new Thread(() -> clientMessageLoop(clientSocket)).start();
+                severSocket severSocket = new severSocket(serverSocket.accept());
+                clientes.add(severSocket);
+                new Thread(() -> clientMessageLoop(severSocket)).start();
             }
         } catch (IOException e) {
             System.out.println("Erro ao conectar cliente " + e.getMessage());
         }
     }
 
-    private void sendMsgToALL(ClientSocket sender, String msg){
-        Iterator<ClientSocket> iterator = clientes.iterator();
-        for(ClientSocket clientSocket: clientes){
-            if(!sender.equals(clientSocket))
-                clientSocket.sendMsg(msg);
+    private void sendMsgToALL(severSocket sender, String msg){
+        Iterator<severSocket> iterator = clientes.iterator();
+        for(severSocket severSocket : clientes){
+            if(!sender.equals(severSocket))
+                severSocket.sendMsg(msg);
         }
     }
 
-    private void clientMessageLoop(ClientSocket clientSocket){
+    private void clientMessageLoop(severSocket severSocket){
         String msg;
         try {
-            while ((msg = clientSocket.getMessage()) != null){
+            while ((msg = severSocket.getMessage()) != null){
                 if(!"sair".equalsIgnoreCase(msg)){
-                    System.out.println("Msg recebida do cliente " + clientSocket.getRemoteSocketAddress() + ": " + msg);
-                    sendMsgToALL(clientSocket,msg);
+                    System.out.println("Msg recebida do cliente " + severSocket.getRemoteSocketAddress() + ": " + msg);
+                    sendMsgToALL(severSocket,msg);
                 }else {
                     return;
                 }
             }
         }
         finally {
-            clientSocket.close();
+            severSocket.close();
         }
     }
 
@@ -80,6 +81,19 @@ public class Server {
             System.out.println("comando desconhecido");
         }
     }
+
+    private void listRoom(){
+        for (gameRoom room : rooms) {
+            System.out.print(room.getName() + ": ");
+            room.listPlayers();
+        }
+    }
+
+    private void sendRooms(){
+
+    }
+
+
 
     public static void main(String[] args) {
         Server server = new Server();
