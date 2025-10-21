@@ -54,13 +54,17 @@ public class severSocket {
         sendMsg(ClientSocket.getRemoteSocketAddress() + "|SERVER|S|" + msg);
     }
 
-    public void sendMsg(String msg){
+    private void sendMsg(String msg){
         try {
             out.writeObject(msg);
             out.flush();
         } catch (IOException e) {
             System.out.println("Erro ao enviar a mensagem: " + e.getMessage());
         }
+    }
+
+    public void sendMsgChat(severSocket sender, String texto, String room){
+        sendMsg(sender + "|" + room + "|M|" + texto);
     }
 
     public void sendRooms( List<gameRoom> rooms){

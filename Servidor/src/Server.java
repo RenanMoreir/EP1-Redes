@@ -41,11 +41,19 @@ public class Server {
         }
     }
 
-    private void sendMsgToALL(severSocket sender){
-        Iterator<severSocket> iterator = clientes.iterator();
-        for(severSocket severSocket : clientes){
+    private void sendMsgToALL(severSocket sender, String texto, String sala){
+        Iterator<gameRoom> iterator = rooms.iterator();
+        for(gameRoom room : rooms){
+            if(room.getName().equalsIgnoreCase(sala)){
+                for(int i = 0; i< room.getPlayersSize(); i++){
+                    if(!room.getPlayers(i).equals(sender)){
+                        sender.sendMsgChat(sender, texto, room.getName());
+                    }
+                }
+            }
+
             //if(!sender.equals(severSocket))
-                //severSocket.sendMsg(msg);
+              //  severSocket.sendMsg(texto);
         }
     }
 
@@ -73,16 +81,13 @@ public class Server {
                             }
                             listRoom();
                     }
-
-                }
-
-
-
-                if(!"sair".equalsIgnoreCase((msgCampos[3]))){
-                    //System.out.println("Msg recebida do cliente " + severSocket.getRemoteSocketAddress() + ": " + msg);
-                    //sendMsgToALL(severSocket,msg);
-                }else {
-                    return;
+                } else {
+                    if(!"sair".equalsIgnoreCase((msgCampos[3]))){
+                        System.out.println("Msg recebida do cliente " + msgCampos[0] + ": " + msgCampos[3]);
+                        sendMsgToALL(severSocket,msgCampos[3], msgCampos[1]);
+                    }else {
+                        return;
+                    }
                 }
             }
         }
