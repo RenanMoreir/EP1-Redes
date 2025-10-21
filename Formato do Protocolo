@@ -1,5 +1,5 @@
 <Remetente>|<Sala>|<Tipo de mensagem>|<conteudo>
-
+--se conteudo precisar de mais de um campo separe por ":" (dois(2) pontos(.))
 implementações:
 
 <remetente>
