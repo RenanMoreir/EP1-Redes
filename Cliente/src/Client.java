@@ -43,15 +43,29 @@ public class Client implements Runnable{
     private void  messageLoop(){
         try{
             String[] msg;
-            if(room.equalsIgnoreCase("null")){
-               clientSocket.requestRooms();
-               msg = (clientSocket.getMessage()).split("/");
-               System.out.println("Salas de Jogo Disponiveis:\n" + msg[4]);
+            String text="null";
+            do{
+                if(room.equalsIgnoreCase("null")){
+                    clientSocket.requestRooms();
+                    msg = (clientSocket.getMessage()).split("\\|");
+                    System.out.println("Salas de Jogo Disponiveis:\n" + msg[3]);
 
-               System.out.println("Escolha um servidor para se conectar:");
-               String room =  scanner.nextLine();
-               clientSocket.conectRoom(room);
-            }
+                    System.out.println("Escolha um servidor para se conectar:");
+                    text =  scanner.nextLine();
+                    clientSocket.conectRoom(text);
+
+                    msg = (clientSocket.getMessage()).split("\\|");
+                    if(msg[2].equalsIgnoreCase("E")){
+                        System.out.println(msg[3]);
+                    }
+                    else if(msg[2].equalsIgnoreCase("S")){
+                        System.out.println(msg[3]);
+                        String[] msgSplited = msg[3].split(":");
+                        room = msgSplited[1];
+                    }
+                }
+
+            } while (!text.equalsIgnoreCase("sair"));
 
             /*String msg;
             do{

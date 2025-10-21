@@ -46,6 +46,14 @@ public class severSocket {
         return null;
     }
 
+    public void sendErro(String msg){
+        sendMsg(ClientSocket.getRemoteSocketAddress() + "|SERVER|E|" + msg);
+    }
+
+    public void sendRoomConectionConfirmation(String msg){
+        sendMsg(ClientSocket.getRemoteSocketAddress() + "|SERVER|S|" + msg);
+    }
+
     public void sendMsg(String msg){
         try {
             out.writeObject(msg);
@@ -74,7 +82,6 @@ public class severSocket {
             sb.append("\n"); // pula linha para próxima sala
         }
 
-        Mensagem msg = new Mensagem("SERVER", 'L', sb.toString());
-        sendMsg(ClientSocket.getRemoteSocketAddress() + "/SERVER/L/" + sb.toString());
+        sendMsg(ClientSocket.getRemoteSocketAddress() + "|SERVER|L|" + sb.toString());
     }
 }

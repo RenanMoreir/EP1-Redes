@@ -41,7 +41,7 @@ public class Server {
         }
     }
 
-    private void sendMsgToALL(severSocket sender, Mensagem msg){
+    private void sendMsgToALL(severSocket sender){
         Iterator<severSocket> iterator = clientes.iterator();
         for(severSocket severSocket : clientes){
             //if(!sender.equals(severSocket))
@@ -53,11 +53,30 @@ public class Server {
         String msg;
         try {
             while ((msg = severSocket.getMessage()) != null){
-                String[] msgCampos = msg.split("/");
-                System.out.println("campo 1: " + msgCampos[1] + " campo 2: " + msgCampos[2] + " campo 3: " + msgCampos[3]+ " campo 4: " + msgCampos[4]);
-                if(msgCampos[2].equalsIgnoreCase("SERVER") && msgCampos[3].equalsIgnoreCase("l")){
-                    severSocket.sendRooms(rooms);
+                String[] msgCampos = msg.split("\\|");
+                System.out.println("campo 0: " + msgCampos[0] + " campo 1: " + msgCampos[1] + " campo 2: " + msgCampos[2]+ " campo 3: " + msgCampos[3]);
+                if(msgCampos[1].equalsIgnoreCase("SERVER")){
+                    switch (msgCampos[2]){
+                        case "L":
+                            severSocket.sendRooms(rooms);
+                        case "S":
+                            Iterator<gameRoom> iterator = rooms.iterator();
+                            for(gameRoom room : rooms){
+                                if(room.getName().equalsIgnoreCase(msgCampos[3])){
+                                    if(room.getPlayersSize() >= 2){
+                                        severSocket.sendErro("<-----ERRO: Sala lotada, por favor tente novamente----->");
+                                    } else {
+                                        room.addPlayers(severSocket);
+                                        severSocket.sendRoomConectionConfirmation("Conexão com sala bem sucedida:" + room.getName());
+                                    }
+                                }
+                            }
+                            listRoom();
+                    }
+
                 }
+
+
 
                 if(!"sair".equalsIgnoreCase((msgCampos[3]))){
                     //System.out.println("Msg recebida do cliente " + severSocket.getRemoteSocketAddress() + ": " + msg);

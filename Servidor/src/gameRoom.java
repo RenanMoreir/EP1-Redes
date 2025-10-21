@@ -1,3 +1,4 @@
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -5,11 +6,10 @@ public class gameRoom {
     private String name;
 
     private Game game;
-    private List<String> players;
+    private List<severSocket> players;
 
     public gameRoom(String name){
         this.name = name;
-
         this.game = new Game();
         this.players = new ArrayList<>(2);
 
@@ -20,17 +20,21 @@ public class gameRoom {
         if(players.size() == 0){
             System.out.println("Sala vazia");
         }else if (players.size() == 1){
-            System.out.print(players.get(0));
+            System.out.print(players.get(0) + ".");
         } else {
-            System.out.print(players.get(0) + ", " + players.get(1));
+            System.out.print(players.get(0) + ", " + players.get(1) + ".");
         }
+    }
+
+    public void addPlayers(severSocket players) {
+        this.players.add(players);
     }
 
     public String getName() {
         return name;
     }
 
-    public String getPlayers(int i){return players.get(i);}
+    public severSocket getPlayers(int i){return players.get(i);}
 
     public int getPlayersSize(){return players.size();}
 }

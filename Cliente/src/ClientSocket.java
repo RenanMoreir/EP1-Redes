@@ -40,12 +40,11 @@ public class ClientSocket {
     }
 
     public void requestRooms(){
-        Mensagem msg = new Mensagem("SERVER", 'L', "null");
-        sendMsg(socket.getRemoteSocketAddress() + "/SERVER/L/NULL");
+        sendMsg(socket.getRemoteSocketAddress() + "|SERVER|L|NULL");
     }
 
     public void conectRoom(String room){
-        sendMsg(socket.getRemoteSocketAddress()+"/SERVER/S/"+room);
+        sendMsg(socket.getRemoteSocketAddress()+"|SERVER|S|"+room);
     }
 
     public void sendMsg(String msg){
