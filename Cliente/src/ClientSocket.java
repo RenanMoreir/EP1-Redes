@@ -1,21 +1,19 @@
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketAddress;
 
 public class ClientSocket {
     private final Socket socket;
-    private final BufferedReader in;
-    private final PrintWriter out;
+    private final ObjectInputStream in;
+    private final ObjectOutputStream out;
 
     public ClientSocket(Socket socket) throws IOException {
-            this.socket = socket;
-            System.out.println("Cliente " + socket.getRemoteSocketAddress() + " conectado");
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+        this.socket = socket;
+        System.out.println("Cliente " + socket.getRemoteSocketAddress() + " conectado");
+        out = new ObjectOutputStream(socket.getOutputStream());
+        out.flush();
+        in = new ObjectInputStream(socket.getInputStream());
     }
 
     public SocketAddress getRemoteSocketAddress(){
@@ -32,16 +30,26 @@ public class ClientSocket {
         }
     }
 
-    public String getMessage(){
-        try{
-            return in.readLine();
-        } catch (IOException e) {
+    public String getMessage() {
+        try {
+            return (String) in.readObject();
+        } catch (ClassNotFoundException | IOException e) {
+            System.out.println("Erro ao ler a mensagem: " + e.getMessage());
             return null;
         }
     }
 
-    public boolean sendMsg(String msg){
-        out.println(msg);
-        return  !out.checkError();
+    public void requestRooms(){
+        Mensagem msg = new Mensagem("SERVER", 'L', "null");
+        sendMsg(socket.getRemoteSocketAddress() + "/SERVER/L/NULL");
+    }
+
+    public void sendMsg(String msg){
+        try {
+            out.writeObject(msg);
+            out.flush();
+        } catch (IOException e) {
+            System.out.println("Erro ao enviar a mensagem: " + e.getMessage());
+        }
     }
 }

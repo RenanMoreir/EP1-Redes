@@ -29,4 +29,8 @@ public class gameRoom {
     public String getName() {
         return name;
     }
+
+    public String getPlayers(int i){return players.get(i);}
+
+    public int getPlayersSize(){return players.size();}
 }

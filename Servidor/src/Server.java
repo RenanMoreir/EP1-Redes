@@ -41,11 +41,11 @@ public class Server {
         }
     }
 
-    private void sendMsgToALL(severSocket sender, String msg){
+    private void sendMsgToALL(severSocket sender, Mensagem msg){
         Iterator<severSocket> iterator = clientes.iterator();
         for(severSocket severSocket : clientes){
-            if(!sender.equals(severSocket))
-                severSocket.sendMsg(msg);
+            //if(!sender.equals(severSocket))
+                //severSocket.sendMsg(msg);
         }
     }
 
@@ -53,9 +53,15 @@ public class Server {
         String msg;
         try {
             while ((msg = severSocket.getMessage()) != null){
-                if(!"sair".equalsIgnoreCase(msg)){
-                    System.out.println("Msg recebida do cliente " + severSocket.getRemoteSocketAddress() + ": " + msg);
-                    sendMsgToALL(severSocket,msg);
+                String[] msgCampos = msg.split("/");
+                System.out.println("campo 1: " + msgCampos[1] + " campo 2: " + msgCampos[2] + " campo 3: " + msgCampos[3]+ " campo 4: " + msgCampos[4]);
+                if(msgCampos[2].equalsIgnoreCase("SERVER") && msgCampos[3].equalsIgnoreCase("l")){
+                    severSocket.sendRooms(rooms);
+                }
+
+                if(!"sair".equalsIgnoreCase((msgCampos[3]))){
+                    //System.out.println("Msg recebida do cliente " + severSocket.getRemoteSocketAddress() + ": " + msg);
+                    //sendMsgToALL(severSocket,msg);
                 }else {
                     return;
                 }
@@ -88,12 +94,6 @@ public class Server {
             room.listPlayers();
         }
     }
-
-    private void sendRooms(){
-
-    }
-
-
 
     public static void main(String[] args) {
         Server server = new Server();

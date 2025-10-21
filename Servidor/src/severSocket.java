@@ -1,31 +1,33 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class severSocket {
-    private final Socket socket;
-    private final BufferedReader in;
-    private final PrintWriter out;
+    private final Socket ClientSocket;
+    private final ObjectInputStream in;
+    private final ObjectOutputStream out;
 
     public severSocket(Socket socket) throws IOException {
-            this.socket = socket;
+            this.ClientSocket = socket;
             System.out.println("Cliente " + socket.getRemoteSocketAddress() + " conectado");
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            out.flush();
+            in = new ObjectInputStream(socket.getInputStream());
     }
 
     public SocketAddress getRemoteSocketAddress(){
-        return socket.getRemoteSocketAddress();
+        return ClientSocket.getRemoteSocketAddress();
     }
 
     public void close(){
         try {
             in.close();
             out.close();
-            socket.close();
+            ClientSocket.close();
         } catch (IOException e) {
             System.out.println("Erro ao fechar a coneção: " + e.getMessage());
         }
@@ -33,14 +35,46 @@ public class severSocket {
 
     public String getMessage(){
         try{
-            return in.readLine();
+            try {
+                return (String) in.readObject();
+            } catch (ClassNotFoundException e) {
+                System.out.println("Erro ao ler a mensagem: " + e.getMessage());
+            }
         } catch (IOException e) {
             return null;
         }
+        return null;
     }
 
-    public boolean sendMsg(String msg){
-        out.println(msg);
-        return  !out.checkError();
+    public void sendMsg(String msg){
+        try {
+            out.writeObject(msg);
+            out.flush();
+        } catch (IOException e) {
+            System.out.println("Erro ao enviar a mensagem: " + e.getMessage());
+        }
+    }
+
+    public void sendRooms( List<gameRoom> rooms){
+        StringBuilder sb = new StringBuilder();
+
+        for (gameRoom sala : rooms) {
+            sb.append(sala.getName()).append(": ");
+
+            int numPlayers = sala.getPlayersSize();
+
+            if (numPlayers == 0) {
+                sb.append("Sala vazia");
+            } else if (numPlayers == 1) {
+                sb.append(sala.getPlayers(0));
+            } else {
+                sb.append(sala.getPlayers(0)).append(", ").append(sala.getPlayers(1));
+            }
+
+            sb.append("\n"); // pula linha para próxima sala
+        }
+
+        Mensagem msg = new Mensagem("SERVER", 'L', sb.toString());
+        sendMsg(ClientSocket.getRemoteSocketAddress() + "/SERVER/L/" + sb.toString());
     }
 }

@@ -1,0 +1,16 @@
+<Remetente>/<Sala>/<Tipo de mensagem>/<conteudo>
+
+implementações:
+
+<remetente>
+    -Sempre sera o buffer do remetente
+<Sala>
+    -Pode ser o nome da sala em que o cliente está logado
+    -Pode ser SERVER quando o cliente quer realizar uma operação no servidor
+<tipo de mensagem>
+    L = lista de salas
+    s = conexão com uma sala
+    M = Mandar uma mensagem em uma sala
+    J = fazer uma ação no jogo
+<conteudo>
+    indica o que sera realizado
