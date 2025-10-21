@@ -44,6 +44,10 @@ public class ClientSocket {
         sendMsg(socket.getRemoteSocketAddress() + "/SERVER/L/NULL");
     }
 
+    public void conectRoom(String room){
+        sendMsg(socket.getRemoteSocketAddress()+"/SERVER/S/"+room);
+    }
+
     public void sendMsg(String msg){
         try {
             out.writeObject(msg);

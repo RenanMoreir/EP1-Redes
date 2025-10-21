@@ -48,7 +48,9 @@ public class Client implements Runnable{
                msg = (clientSocket.getMessage()).split("/");
                System.out.println("Salas de Jogo Disponiveis:\n" + msg[4]);
 
-
+               System.out.println("Escolha um servidor para se conectar:");
+               String room =  scanner.nextLine();
+               clientSocket.conectRoom(room);
             }
 
             /*String msg;
