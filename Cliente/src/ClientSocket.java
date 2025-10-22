@@ -30,6 +30,10 @@ public class ClientSocket {
         }
     }
 
+    public void sendMsgChat(ClientSocket sender, String texto, String room){
+        sendMsg(sender + "|" + room + "|M|" + texto);
+    }
+
     public String getMessage() {
         try {
             return (String) in.readObject();

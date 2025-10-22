@@ -8,6 +8,7 @@ public class Client implements Runnable{
     private  static final int serverSocket = 4000;
     private ClientSocket clientSocket;
     private static String room = "null";
+    private static boolean isPlaying = false;
 
     private Scanner scanner;
 
@@ -19,8 +20,8 @@ public class Client implements Runnable{
         try {
             System.out.println("Cliente conectado ao servidor em "  + SERVER_ADRESS + " Porta: " + serverSocket);
             clientSocket = new ClientSocket(new Socket(SERVER_ADRESS, serverSocket));
-            //new Thread(this).start();
             messageLoop();
+
         }
         catch (IOException ex){
             System.out.println("Erros ao iniciar o Cliente " + ex.getMessage());
@@ -34,9 +35,12 @@ public class Client implements Runnable{
     public void run(){
         String msg;
         while ((msg = clientSocket.getMessage()) != null ){
-            //System.out.print("\033[2K\r");
-           // System.out.println("\r Msg recebida:" + msg);
-            //System.out.print("Digite uma mensagem: ");
+            String[] msgSplit = msg.split("\\|");
+            if(msgSplit[2].equalsIgnoreCase("M") && !isPlaying){
+                System.out.print("\033[2K\r");
+                System.out.println("\r Msg recebida:" + msgSplit[3]);
+                System.out.print("Digite uma mensagem: ");
+            }
         }
     }
 
@@ -62,16 +66,21 @@ public class Client implements Runnable{
                         System.out.println(msg[3]);
                         String[] msgSplited = msg[3].split(":");
                         room = msgSplited[1];
+
                     }
+                    new Thread(this).start();
+
+                } else {
+                    System.out.print("Digite uma mensagem: ");
+                    String mensagem = scanner.nextLine();
+                    clientSocket.sendMsgChat(clientSocket, mensagem, room);
                 }
 
             } while (!text.equalsIgnoreCase("sair"));
 
             /*String msg;
             do{
-                System.out.print("Digite uma mensagem: ");
-                msg = scanner.nextLine();
-                clientSocket.sendMsg(msg);
+
             } while (!msg.equalsIgnoreCase("sair"));*/
         } catch (Exception e) {
             System.out.print("Erros ao enviar a mensagem " + e.getMessage());
