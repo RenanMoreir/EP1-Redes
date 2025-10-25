@@ -29,7 +29,7 @@ public class ClientSocket {
             System.out.println("Erro ao fechar a coneção: " + e.getMessage());
         }
     }
-
+    //função que envia uma mensagem no chat
     public void sendMsgChat(ClientSocket sender, String texto, String room){
         sendMsg(sender + "|" + room + "|M|" + texto);
     }
@@ -42,15 +42,15 @@ public class ClientSocket {
             return null;
         }
     }
-
+    //função que envia uma mensagem solicitando as salas
     public void requestRooms(){
         sendMsg(socket.getRemoteSocketAddress() + "|SERVER|L|NULL");
     }
-
+    //função que envia uma mensagem se conectando com uma sala
     public void conectRoom(String room){
         sendMsg(socket.getRemoteSocketAddress()+"|SERVER|S|"+room);
     }
-
+    //função que envia uma mensagem
     public void sendMsg(String msg){
         try {
             out.writeObject(msg);

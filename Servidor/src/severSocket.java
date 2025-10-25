@@ -23,6 +23,7 @@ public class severSocket {
         return ClientSocket.getRemoteSocketAddress();
     }
 
+    //fecha a conexão
     public void close(){
         try {
             in.close();
@@ -33,6 +34,7 @@ public class severSocket {
         }
     }
 
+    //pega uma mensagem do sockt
     public String getMessage(){
         try{
             try {
@@ -46,14 +48,16 @@ public class severSocket {
         return null;
     }
 
+    //envia uma mensagem de erro ao cliente
     public void sendErro(String msg){
         sendMsg(ClientSocket.getRemoteSocketAddress() + "|SERVER|E|" + msg);
     }
-
+    //mensagem que confirma se a conexão com a sala foi possivel
     public void sendRoomConectionConfirmation(String msg){
         sendMsg(ClientSocket.getRemoteSocketAddress() + "|SERVER|S|" + msg);
     }
 
+    //envia uma mensagem, essa função é utilizada por todas as outras funções que mandam menssagem
     private void sendMsg(String msg){
         try {
             out.writeObject(msg);
@@ -62,11 +66,11 @@ public class severSocket {
             System.out.println("Erro ao enviar a mensagem: " + e.getMessage());
         }
     }
-
+    //função que manda uma mensagem no chat
     public void sendMsgChat(severSocket sender, String texto, String room){
         sendMsg(sender + "|" + room + "|M|" + texto);
     }
-
+    //envia as salas
     public void sendRooms( List<gameRoom> rooms){
         StringBuilder sb = new StringBuilder();
 

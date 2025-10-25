@@ -16,6 +16,7 @@ public class Client implements Runnable{
         scanner = new Scanner(System.in);
     }
 
+    //inicia o cliente
     public void start(){
         try {
             System.out.println("Cliente conectado ao servidor em "  + SERVER_ADRESS + " Porta: " + serverSocket);
@@ -30,7 +31,7 @@ public class Client implements Runnable{
             clientSocket.close();
         }
     }
-
+    /*função que envia e recebe mensagens do chat */
     @Override
     public void run(){
         String msg;
@@ -43,12 +44,15 @@ public class Client implements Runnable{
             }
         }
     }
-
+    /*função princiapl do cleinte, nela é feito o controle de mensagens enviadas*/
     private void  messageLoop(){
         try{
             String[] msg;
             String text="null";
             do{
+                /*se não houver se conectado com uma sala execute esse treicho do codigo
+                nele o cliente recebera uma lista das salas disponiveie e deve escolher uma sala
+                valida para entrar*/
                 if(room.equalsIgnoreCase("null")){
                     clientSocket.requestRooms();
                     msg = (clientSocket.getMessage()).split("\\|");
@@ -66,22 +70,17 @@ public class Client implements Runnable{
                         System.out.println(msg[3]);
                         String[] msgSplited = msg[3].split(":");
                         room = msgSplited[1];
-
                     }
-                    new Thread(this).start();
 
                 } else {
+                    //codigo responsavel pelo envio de menssagens do chat
+                    new Thread(this).start();
                     System.out.print("Digite uma mensagem: ");
                     String mensagem = scanner.nextLine();
                     clientSocket.sendMsgChat(clientSocket, mensagem, room);
                 }
 
             } while (!text.equalsIgnoreCase("sair"));
-
-            /*String msg;
-            do{
-
-            } while (!msg.equalsIgnoreCase("sair"));*/
         } catch (Exception e) {
             System.out.print("Erros ao enviar a mensagem " + e.getMessage());
         }
